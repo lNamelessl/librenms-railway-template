@@ -9,12 +9,12 @@
 #   - adapted 04-svc-main.sh + 07-svc-cron.sh keep web (nginx/php-fpm),
 #     snmpd and cron alive alongside the dispatcher (upstream would strip
 #     them for sidecar roles)
-#   - a first-boot seed sets icmp_check=false: Railway containers run
-#     without CAP_NET_RAW, so fping can never work; without this, SNMP
-#     devices are marked down before SNMP is ever tried
-# Env defaults below are baked here (not template variables) so the
-# marketplace deploy needs zero form inputs; every one can be overridden
-# with a normal Railway variable after deploy.
+#   - a first-boot seed sets icmp_check=false (Railway containers run
+#     without CAP_NET_RAW, so fping can never work) and modest dispatcher
+#     worker pools (Railway caps containers at 1000 tasks; CPU-sized
+#     defaults crash with "can't start new thread")
+# Env defaults are baked here (not template variables) so the marketplace
+# deploy needs zero form inputs; each can be overridden after deploy.
 FROM librenms/librenms:26.8.2
 
 ENV SIDECAR_DISPATCHER=1 \
@@ -23,7 +23,11 @@ ENV SIDECAR_DISPATCHER=1 \
     CACHE_DRIVER=redis \
     SESSION_DRIVER=redis \
     CACHE_STORE=redis \
-    PORT=8000 \n    FPM_PM_MAX_CHILDREN=8 \n    FPM_PM_START_SERVERS=2 \n    FPM_PM_MIN_SPARE_SERVERS=2 \n    FPM_PM_MAX_SPARE_SERVERS=4
+    PORT=8000 \
+    FPM_PM_MAX_CHILDREN=8 \
+    FPM_PM_START_SERVERS=2 \
+    FPM_PM_MIN_SPARE_SERVERS=2 \
+    FPM_PM_MAX_SPARE_SERVERS=4
 
 COPY --chmod=755 03zz-railway-seed.sh /etc/cont-init.d/03zz-railway-seed.sh
 COPY --chmod=755 04-svc-main.sh /etc/cont-init.d/04-svc-main.sh
