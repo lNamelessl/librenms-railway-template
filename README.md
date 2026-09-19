@@ -2,7 +2,7 @@
 
 One-click [Railway](https://railway.com) template for **[LibreNMS](https://www.librenms.org)** — the standard open-source network monitoring system: full SNMP auto-discovery, polling, alerting, and graphs.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/librenms-template-1)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/librenms-template-2)
 
 Three services: `librenms` + `mariadb` + `redis`. Zero deploy-form inputs — credentials are generated per deploy, everything is wired by reference.
 

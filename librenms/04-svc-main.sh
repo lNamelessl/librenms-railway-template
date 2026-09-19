@@ -75,12 +75,10 @@ while ! ${dbcmd} -e "show databases;" >/dev/null 2>&1; do
 done
 echo "Database ready!"
 
-# Enable first run wizard if db is empty
-counttables=$(echo 'SHOW TABLES' | ${dbcmd} "$DB_NAME" | wc -l)
-if [ "${counttables}" -eq "0" ]; then
-  echo "Enabling First Run Wizard..."
-  echo "INSTALL=user,finish" >>${LIBRENMS_PATH}/.env
-fi
+# Railway template: no first-run wizard. Railway template deploys boot the
+# container twice (config pass after first boot), and the wizard gate only
+# survives the first boot - the admin account is seeded deterministically
+# by 04zz-railway-admin.sh below instead.
 
 echo "Updating database schema..."
 lnms migrate --force --no-ansi --no-interaction
@@ -89,6 +87,12 @@ artisan db:seed --force --no-ansi --no-interaction
 echo "Clear cache"
 artisan cache:clear --no-interaction
 artisan config:cache --no-interaction
+
+# Railway template: seed the admin account deterministically (see
+# 04zz-railway-admin.sh; runs after migrations, before the web UI starts).
+if [ -n "${ADMIN_PASSWORD:-}" ] && [ -f /etc/cont-init.d/04zz-railway-admin.sh ]; then
+  /etc/cont-init.d/04zz-railway-admin.sh || echo "[railway] admin seed failed (non-fatal)"
+fi
 
 mkdir -p /etc/services.d/nginx
 cat >/etc/services.d/nginx/run <<EOL
