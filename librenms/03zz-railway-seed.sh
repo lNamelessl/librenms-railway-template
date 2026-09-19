@@ -1,14 +1,20 @@
 #!/usr/bin/with-contenv sh
-# Railway platform note: Railway containers do not get CAP_NET_RAW, so
-# ICMP (fping) can never work there. LibreNMS defaults to icmp_check=true,
-# which makes the poller abort and mark devices down before SNMP is tried.
-# Seed icmp_check=false once, on first boot, so SNMP devices poll cleanly.
-# The file lives on the persistent /data volume, so users can edit or
-# remove it later; ConfigSeeder only applies it while the DB is fresh.
+# Railway platform notes (seeded once, on first boot, while the DB is fresh):
+#
+# 1. ICMP: Railway containers do not get CAP_NET_RAW, so fping can never
+#    work. LibreNMS defaults to icmp_check=true, which makes the poller
+#    abort and mark devices down before SNMP is tried. Seed icmp_check=false
+#    so SNMP devices poll cleanly. Lives on the persistent /data volume;
+#    users can edit or remove it later.
+# 2. Dispatcher worker counts: librenms-service.py sizes its worker pools
+#    from the CPU count (16 discovery + 24 poller + 8 services threads on an
+#    8-vCPU host). Railway caps containers at 1000 tasks; together with
+#    php-fpm that can hit the ceiling ("can't start new thread"). Seed
+#    modest pools that still parallelize small-to-medium networks.
 set -e
 
 mkdir -p /data/config
 if [ ! -f /data/config/zz-railway.yaml ]; then
   echo "[railway] seeding icmp_check=false (no CAP_NET_RAW on Railway)"
-  printf 'icmp_check: false\n' > /data/config/zz-railway.yaml
+  printf 'icmp_check: false\nservice_poller_workers: 8\nservice_discovery_workers: 4\nservice_services_workers: 2\n' > /data/config/zz-railway.yaml
 fi

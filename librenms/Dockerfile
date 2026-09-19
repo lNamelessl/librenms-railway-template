@@ -23,7 +23,7 @@ ENV SIDECAR_DISPATCHER=1 \
     CACHE_DRIVER=redis \
     SESSION_DRIVER=redis \
     CACHE_STORE=redis \
-    PORT=8000
+    PORT=8000 \n    FPM_PM_MAX_CHILDREN=8 \n    FPM_PM_START_SERVERS=2 \n    FPM_PM_MIN_SPARE_SERVERS=2 \n    FPM_PM_MAX_SPARE_SERVERS=4
 
 COPY --chmod=755 03zz-railway-seed.sh /etc/cont-init.d/03zz-railway-seed.sh
 COPY --chmod=755 04-svc-main.sh /etc/cont-init.d/04-svc-main.sh
