@@ -4,7 +4,10 @@
 # expression variables. Nothing else is modified. Pin follows upstream.
 FROM librenms/librenms:26.8.2
 
-ENV DB_NAME=librenms \
+ENV MY_BUILD_TAG=v3 \
+    SIDECAR_DISPATCHER=0 \
+    DISPATCHER_NODE_ID= \
+    DB_NAME=librenms \
     DB_USER=librenms \
     DB_PORT=3306 \
     DB_TIMEOUT=120 \
