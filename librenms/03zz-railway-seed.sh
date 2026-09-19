@@ -16,5 +16,5 @@ set -e
 mkdir -p /data/config
 if [ ! -f /data/config/zz-railway.yaml ]; then
   echo "[railway] seeding icmp_check=false (no CAP_NET_RAW on Railway)"
-  printf 'icmp_check: false\nservice_poller_workers: 8\nservice_discovery_workers: 4\nservice_services_workers: 2\n' > /data/config/zz-railway.yaml
+  printf 'icmp_check: false\nservice_poller_workers: 1\nservice_discovery_workers: 1\nservice_services_workers: 1\n' > /data/config/zz-railway.yaml
 fi
