@@ -31,5 +31,4 @@ ENV SIDECAR_DISPATCHER=1 \
 
 COPY --chmod=755 03zz-railway-seed.sh /etc/cont-init.d/03zz-railway-seed.sh
 COPY --chmod=755 04-svc-main.sh /etc/cont-init.d/04-svc-main.sh
-COPY --chmod=755 04zz-railway-admin.sh /etc/cont-init.d/04zz-railway-admin.sh
 COPY --chmod=755 07-svc-cron.sh /etc/cont-init.d/07-svc-cron.sh
